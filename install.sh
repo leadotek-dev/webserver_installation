@@ -287,7 +287,9 @@ EOF
 )"
 
   for pool_dir in "${pools[@]}"; do
-    version="$(basename "$(dirname "${pool_dir}")")"
+    # pool_dir is /etc/php/<version>/fpm/pool.d, so the version is two
+    # directory levels above it, not one (which would yield "fpm").
+    version="$(basename "$(dirname "$(dirname "${pool_dir}")")")"
     # Filename sorts last so it wins over the package defaults.
     dropin="${pool_dir}/zz-caddy-socket.conf"
 
