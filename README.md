@@ -14,12 +14,15 @@ sudo ./install.sh
 Or, without cloning the repository, run the script straight from `main`:
 
 ```sh
-sudo bash <(curl -fsSL https://raw.githubusercontent.com/leadotek-dev/webserver_installation/main/install.sh)
+sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/leadotek-dev/webserver_installation/main/install.sh)"
 ```
 
-Process substitution keeps the terminal on stdin, so the interactive prompts
-work. Do not use `curl ... | sudo bash`: bash would read the prompts from the
-piped script instead of the terminal.
+`bash -c` runs the fetched script with the terminal still on stdin, so the
+interactive prompts work. Do not use `curl ... | sudo bash`: bash would read
+the prompts from the piped script instead of the terminal. Do not use
+`sudo bash <(curl ...)` either: sudo closes inherited file descriptors above
+2, so the child bash cannot open `/dev/fd/63` and fails with
+`bash: /dev/fd/63: No such file or directory`.
 
 Re-running the script is safe.
 
@@ -105,11 +108,12 @@ sudo ./migrate_to_systemd.sh
 Or, without cloning the repository, run the script straight from `main`:
 
 ```sh
-sudo bash <(curl -fsSL https://raw.githubusercontent.com/leadotek-dev/webserver_installation/main/migrate_to_systemd.sh)
+sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/leadotek-dev/webserver_installation/main/migrate_to_systemd.sh)"
 ```
 
-Process substitution keeps the terminal on stdin, so the interactive prompts
-work. Do not use `curl ... | sudo bash`.
+`bash -c` keeps the terminal on stdin, so the interactive prompts work. Do
+not use `curl ... | sudo bash` or `sudo bash <(curl ...)` (sudo closes the
+inherited descriptor behind `/dev/fd/63`).
 
 Re-running is safe. Prompts, in order:
 
